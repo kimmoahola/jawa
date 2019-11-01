@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import formatDistance from "date-fns/formatDistance";
 import { Observation } from "./Observation";
 import { xmlToJson } from "../utils";
 import { FORECAST_REFRESH_INTERVAL } from "../config";
 import { TempTsPair } from "./TempTsPair";
+import { LastUpdated } from "./LastUpdated";
 
 const getInterestingTimestamps = forecast => {
   const interestingHours = [8, 16, 19];
@@ -84,17 +84,6 @@ function Weather({ place }) {
       </div>
     </div>
   );
-}
-
-function LastUpdated({ ts }) {
-  const [mark, setMark] = useState(0);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setMark(m => m + 1), 30 * 1000);
-    return () => clearTimeout(timer);
-  }, [mark]);
-
-  return <p>Last updated {formatDistance(new Date(), ts)} ago.</p>;
 }
 
 export { Weather };
