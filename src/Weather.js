@@ -35,6 +35,9 @@ function Weather() {
         json["wfs:FeatureCollection"] &&
           json["wfs:FeatureCollection"]["wfs:member"]
           ? {
+              ts: new Date(
+                json["wfs:FeatureCollection"]["@attributes"]["timeStamp"]
+              ),
               place: place,
               forecast: getInterestingTimestamps(
                 json["wfs:FeatureCollection"]["wfs:member"].map(e => ({
@@ -60,6 +63,7 @@ function Weather() {
               <OneForecast key={index} ts={e["ts"]} temp={e["temp"]} />
             ))}
           </div>
+          <p>Last updated {data["ts"].toLocaleString("fi-FI")}</p>
         </>
       ) : (
         ""
