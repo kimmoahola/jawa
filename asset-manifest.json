@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/jawa/static/css/main.b100e6da.chunk.css",
+    "main.js": "/jawa/static/js/main.db5ff33f.chunk.js",
+    "main.js.map": "/jawa/static/js/main.db5ff33f.chunk.js.map",
+    "runtime-main.js": "/jawa/static/js/runtime-main.82e6275d.js",
+    "runtime-main.js.map": "/jawa/static/js/runtime-main.82e6275d.js.map",
+    "static/js/2.988c750d.chunk.js": "/jawa/static/js/2.988c750d.chunk.js",
+    "static/js/2.988c750d.chunk.js.map": "/jawa/static/js/2.988c750d.chunk.js.map",
+    "index.html": "/jawa/index.html",
+    "precache-manifest.d794122007a3d9d96fe22137ca19d014.js": "/jawa/precache-manifest.d794122007a3d9d96fe22137ca19d014.js",
+    "service-worker.js": "/jawa/service-worker.js",
+    "static/css/main.b100e6da.chunk.css.map": "/jawa/static/css/main.b100e6da.chunk.css.map",
+    "static/media/logo.svg": "/jawa/static/media/logo.25bf045c.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.82e6275d.js",
+    "static/js/2.988c750d.chunk.js",
+    "static/css/main.b100e6da.chunk.css",
+    "static/js/main.db5ff33f.chunk.js"
+  ]
+}
