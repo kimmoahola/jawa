@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
+import formatDistance from "date-fns/formatDistance";
 import { xmlToJson } from "./utils";
+
+const FORECAST_REFRESH_INTERVAL = 30 * 60 * 1000;
 
 const getInterestingTimestamps = forecast => {
   const interestingHours = [8, 16, 19];
@@ -17,6 +20,15 @@ const getInterestingTimestamps = forecast => {
 
 function Weather() {
   const [data, setData] = useState(undefined);
+  const [mark, setMark] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(
+      () => setMark(m => m + 1),
+      FORECAST_REFRESH_INTERVAL
+    );
+    return () => clearTimeout(timer);
+  }, [mark]);
 
   useEffect(() => {
     async function fetchData() {
@@ -50,7 +62,7 @@ function Weather() {
       );
     }
     fetchData();
-  }, []);
+  }, [mark]);
 
   return (
     <div>
@@ -63,13 +75,24 @@ function Weather() {
               <OneForecast key={index} ts={e["ts"]} temp={e["temp"]} />
             ))}
           </div>
-          <p>Last updated {data["ts"].toLocaleString("fi-FI")}</p>
+          <LastUpdated ts={data["ts"]} />
         </>
       ) : (
         ""
       )}
     </div>
   );
+}
+
+function LastUpdated({ ts }) {
+  const [mark, setMark] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMark(m => m + 1), 30 * 1000);
+    return () => clearTimeout(timer);
+  }, [mark]);
+
+  return <p>Last updated {formatDistance(new Date(), ts)} ago.</p>;
 }
 
 function OneForecast({ ts, temp }) {
