@@ -1,0 +1,1 @@
+export const FORECAST_REFRESH_INTERVAL = 30 * 60 * 1000;

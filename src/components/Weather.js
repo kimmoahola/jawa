@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import formatDistance from "date-fns/formatDistance";
-import { xmlToJson } from "./utils";
-
-const FORECAST_REFRESH_INTERVAL = 30 * 60 * 1000;
+import { Observation } from "./Observation";
+import { xmlToJson } from "../utils";
+import { FORECAST_REFRESH_INTERVAL } from "../config";
+import { TempTsPair } from "./TempTsPair";
 
 const getInterestingTimestamps = forecast => {
   const interestingHours = [8, 16, 19];
@@ -18,7 +19,7 @@ const getInterestingTimestamps = forecast => {
   return result;
 };
 
-function Weather() {
+function Weather({ place }) {
   const [data, setData] = useState(undefined);
   const [mark, setMark] = useState(0);
 
@@ -32,7 +33,6 @@ function Weather() {
 
   useEffect(() => {
     async function fetchData() {
-      const place = "Tampere";
       const endTime = new Date(Date.now());
       endTime.setTime(endTime.getTime() + 48 * 60 * 60 * 1000);
 
@@ -50,7 +50,6 @@ function Weather() {
               ts: new Date(
                 json["wfs:FeatureCollection"]["@attributes"]["timeStamp"]
               ),
-              place: place,
               forecast: getInterestingTimestamps(
                 json["wfs:FeatureCollection"]["wfs:member"].map(e => ({
                   ts: new Date(e["BsWfs:BsWfsElement"]["BsWfs:Time"]),
@@ -58,28 +57,31 @@ function Weather() {
                 }))
               )
             }
-          : { place: place }
+          : {}
       );
     }
     fetchData();
-  }, [mark]);
+  }, [mark, place]);
 
   return (
     <div>
-      {data ? (
-        <>
-          <p>Forecast of</p>
-          <h1>{data["place"]}</h1>
-          <div>
-            {data["forecast"].map((e, index) => (
-              <OneForecast key={index} ts={e["ts"]} temp={e["temp"]} />
-            ))}
-          </div>
-          <LastUpdated ts={data["ts"]} />
-        </>
-      ) : (
-        ""
-      )}
+      <p>Forecast of</p>
+      <h1>{place}</h1>
+      <div>
+        <Observation place={place} />
+        {data ? (
+          <>
+            <div>
+              {data["forecast"].map((e, index) => (
+                <TempTsPair key={index} ts={e["ts"]} temp={e["temp"]} />
+              ))}
+            </div>
+            <LastUpdated ts={data["ts"]} />
+          </>
+        ) : (
+          ""
+        )}
+      </div>
     </div>
   );
 }
@@ -93,14 +95,6 @@ function LastUpdated({ ts }) {
   }, [mark]);
 
   return <p>Last updated {formatDistance(new Date(), ts)} ago.</p>;
-}
-
-function OneForecast({ ts, temp }) {
-  return (
-    <div>
-      {ts.toLocaleString("fi-FI")}: {temp}
-    </div>
-  );
 }
 
 export { Weather };
