@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { Weather } from "./components/Weather";
+import { DataLayer } from "./components/DataLayer";
 
 const PLACE = "Tampere";
 
@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Weather place={PLACE} />
+        <DataLayer place={PLACE} />
       </header>
     </div>
   );

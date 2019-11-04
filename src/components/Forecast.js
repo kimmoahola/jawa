@@ -2,15 +2,16 @@ import React from "react";
 import { TempTsPair } from "./TempTsPair";
 import { LastUpdated } from "./LastUpdated";
 
-export function Observation({ data }) {
+export function Forecast({ data }) {
   return (
     <div>
       {data ? (
         <>
-          <TempTsPair
-            ts={data["observation"]["ts"]}
-            temp={data["observation"]["temp"]}
-          />
+          <div>
+            {data["forecast"].map((e, index) => (
+              <TempTsPair key={index} ts={e["ts"]} temp={e["temp"]} />
+            ))}
+          </div>
           <LastUpdated ts={data["ts"]} />
         </>
       ) : (
