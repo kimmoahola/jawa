@@ -1,21 +1,22 @@
 import React from "react";
 import { TempTsPair } from "./TempTsPair";
-import { LastUpdated } from "./LastUpdated";
 
 export function Observation({ data }) {
   return (
     <div>
-      {data ? (
-        <>
+      <div className="forecast-date">Nyt</div>
+
+      <div className="weather-item">
+        {data ? (
           <TempTsPair
             ts={data["observation"]["ts"]}
             temp={data["observation"]["temp"]}
+            includeMinutes={true}
           />
-          <LastUpdated ts={data["ts"]} />
-        </>
-      ) : (
-        ""
-      )}
+        ) : (
+          "N/A"
+        )}
+      </div>
     </div>
   );
 }

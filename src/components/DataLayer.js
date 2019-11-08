@@ -10,7 +10,13 @@ const DATA_CHECK_INTERVAL = 30 * 1000;
 
 export function DataLayer({ place }) {
   const [forecastData, setForecastData] = useState(undefined);
+  const [lastForecastDataAttempt, setLastForecastDataAttempt] = useState(
+    undefined
+  );
   const [observationData, setObservationData] = useState(undefined);
+  const [lastObservationDataAttempt, setLastObservationDataAttempt] = useState(
+    undefined
+  );
   const [mark, setMark] = useState(0);
 
   useEffect(() => {
@@ -23,30 +29,58 @@ export function DataLayer({ place }) {
       setForecastData(await fetchForecast({ place }));
     }
 
+    const logData = {
+      forecastData: !!forecastData,
+      lastForecastDataAttempt: lastForecastDataAttempt,
+      "Date.now() - lastForecastDataAttempt":
+        lastForecastDataAttempt && Date.now() - lastForecastDataAttempt,
+      FORECAST_REFRESH_INTERVAL: FORECAST_REFRESH_INTERVAL
+    };
+
     if (
       !forecastData ||
       (forecastData &&
-        forecastData["ts"] &&
-        Date.now() - forecastData["ts"] > FORECAST_REFRESH_INTERVAL)
+        lastForecastDataAttempt &&
+        Date.now() - lastForecastDataAttempt > FORECAST_REFRESH_INTERVAL)
     ) {
+      console.log("Need forecast data refresh", logData);
+
+      setLastForecastDataAttempt(Date.now());
       fetchData();
+    } else {
+      console.log("No need for forecast data refresh", logData);
     }
-  }, [mark, place, forecastData]);
+    // eslint-disable-next-line
+  }, [mark, place]);
 
   useEffect(() => {
     async function fetchData() {
       setObservationData(await fetchObservation({ place }));
     }
 
+    const logData = {
+      observationData: !!observationData,
+      lastObservationDataAttempt: lastObservationDataAttempt,
+      "Date.now() - lastObservationDataAttempt":
+        lastObservationDataAttempt && Date.now() - lastObservationDataAttempt,
+      OBSERVATION_REFRESH_INTERVAL: OBSERVATION_REFRESH_INTERVAL
+    };
+
     if (
       !observationData ||
       (observationData &&
-        observationData["ts"] &&
-        Date.now() - observationData["ts"] > OBSERVATION_REFRESH_INTERVAL)
+        lastObservationDataAttempt &&
+        Date.now() - lastObservationDataAttempt > OBSERVATION_REFRESH_INTERVAL)
     ) {
+      console.log("Need observation data refresh", logData);
+
+      setLastObservationDataAttempt(Date.now());
       fetchData();
+    } else {
+      console.log("No need for observation data refresh", logData);
     }
-  }, [mark, place, observationData]);
+    // eslint-disable-next-line
+  }, [mark, place]);
 
   return (
     <Weather
