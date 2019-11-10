@@ -1,63 +1,91 @@
-import { INTERESTING_HOURS } from "./config";
 import { xmlToJson } from "./utils";
 import {
   startOfDay,
   getUnixTime,
   fromUnixTime,
   endOfDay,
-  addHours
+  addHours,
+  startOfHour
 } from "date-fns";
 
-const getInterestingTimestamps = ({ forecast }) => {
-  const result = {
-    // Date: {
-    //   items: [
-    //     {
-    //       ts: Date,
-    //       temp: Number,
-    //     }
-    //   ]
-    // }
-  };
+function makeArraySortedByKey(obj) {
+  return Object.keys(obj)
+    .map(function(key) {
+      return [key, obj[key]];
+    })
+    .sort(function(first, second) {
+      return first[0] - second[0];
+    });
+}
 
-  for (let index = 0; index < forecast.length; index++) {
-    const element = forecast[index];
-    if (INTERESTING_HOURS.indexOf(element["ts"].getHours()) !== -1) {
-      const key = getUnixTime(startOfDay(element["ts"]));
-      const e = (key in result && result[key]) || (result[key] = { items: [] });
+function convertToForecastData({ tsByValuesObject }) {
+  return makeArraySortedByKey(
+    Object.keys(tsByValuesObject).reduce((previousValue, key) => {
+      const value = tsByValuesObject[key];
 
-      e["items"] || (e["items"] = []);
-      e["items"].push({
-        ts: element["ts"],
-        temp: element["temp"]
-      });
-    }
-  }
+      const ts = fromUnixTime(key);
+      const tsStartOfHour = startOfHour(ts);
 
-  // Create items array
-  var items = Object.keys(result).map(function(key) {
-    return [key, result[key]];
-  });
+      // getUnixTime so that the timestamp can be put to object as a key
+      const tsStartOfHourUnix = getUnixTime(tsStartOfHour);
+      const startOfDayUnix = getUnixTime(startOfDay(ts));
 
-  // Sort the array based on the second element
-  items.sort(function(first, second) {
-    return first[0] - second[0];
-  });
+      previousValue[startOfDayUnix] = {
+        ...previousValue[startOfDayUnix],
+        [tsStartOfHourUnix]: {
+          ...(previousValue[startOfDayUnix]
+            ? previousValue[startOfDayUnix][tsStartOfHourUnix]
+            : {}),
+          ...value
+        }
+      };
 
-  // [
-  //   {
-  //     startOfDay: Date,
-  //     items: [
-  //       ts: Date,
-  //       temp: Number
-  //     ]
-  //   }
-  // ]
-  return items.map(a => ({
-    startOfDay: fromUnixTime(a[0]),
-    items: a[1].items
+      return previousValue;
+    }, {})
+  ).map(g => ({
+    startOfDay: fromUnixTime(g[0]),
+    items: makeArraySortedByKey(g[1]).map(h => ({
+      ts: fromUnixTime(h[0]),
+      ...h[1]
+    }))
   }));
-};
+}
+
+function timestampsToValuesObject({ responseData }) {
+  return (
+    (responseData &&
+      responseData["wfs:FeatureCollection"] &&
+      responseData["wfs:FeatureCollection"]["wfs:member"]) ||
+    []
+  ).reduce((previousValue, currentValue) => {
+    // console.log(previousValue, currentValue);
+    const item = currentValue["BsWfs:BsWfsElement"];
+
+    const ts = new Date(item["BsWfs:Time"]);
+
+    // getUnixTime so that the timestamp can be put to object as a key
+    const tsUnix = getUnixTime(ts);
+
+    const name = item["BsWfs:ParameterName"];
+    const value = Number(item["BsWfs:ParameterValue"]);
+
+    previousValue[tsUnix] = {
+      ...previousValue[tsUnix],
+      ...{ [name]: value }
+    };
+
+    return previousValue;
+  }, {});
+}
+
+function valueWithHighestKey({ obj }) {
+  const arr = makeArraySortedByKey(obj);
+  const lastItem = arr[arr.length - 1];
+  return {
+    key: lastItem && lastItem[0],
+    value: lastItem && lastItem[1]
+  };
+}
 
 async function fetchXml({ url }) {
   const result = await fetch(url);
@@ -69,47 +97,31 @@ async function fetchXml({ url }) {
 export async function fetchForecast({ place }) {
   const endTime = endOfDay(addHours(Date.now(), 2 * 24));
 
-  const json = await fetchXml({
-    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&place=${place}&parameters=temperature&endtime=${endTime.toISOString()}`
+  const responseData = await fetchXml({
+    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&place=${place}&parameters=temperature,windspeedms,precipitation1h&endtime=${endTime.toISOString()}`
   });
 
-  return json["wfs:FeatureCollection"] &&
-    json["wfs:FeatureCollection"]["wfs:member"]
-    ? {
-        ts: new Date(json["wfs:FeatureCollection"]["@attributes"]["timeStamp"]),
-        forecast: getInterestingTimestamps({
-          forecast: json["wfs:FeatureCollection"]["wfs:member"].map(e => ({
-            ts: new Date(e["BsWfs:BsWfsElement"]["BsWfs:Time"]),
-            temp: Number(e["BsWfs:BsWfsElement"]["BsWfs:ParameterValue"])
-          }))
-        })
-      }
-    : {};
+  return convertToForecastData({
+    tsByValuesObject: timestampsToValuesObject({ responseData })
+  });
 }
 
 export async function fetchObservation({ place }) {
   const startTime = addHours(Date.now(), -1);
 
-  const json = await fetchXml({
-    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::observations::weather::simple&place=${place}&parameters=temperature&starttime=${startTime.toISOString()}`
+  const responseData = await fetchXml({
+    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::observations::weather::simple&place=${place}&parameters=temperature,windspeedms,precipitation1h&starttime=${startTime.toISOString()}`
   });
 
-  return json["wfs:FeatureCollection"] &&
-    json["wfs:FeatureCollection"]["wfs:member"]
-    ? {
-        ts: new Date(json["wfs:FeatureCollection"]["@attributes"]["timeStamp"]),
-        observation: {
-          ts: new Date(
-            json["wfs:FeatureCollection"]["wfs:member"][
-              json["wfs:FeatureCollection"]["wfs:member"].length - 1
-            ]["BsWfs:BsWfsElement"]["BsWfs:Time"]
-          ),
-          temp: Number(
-            json["wfs:FeatureCollection"]["wfs:member"][
-              json["wfs:FeatureCollection"]["wfs:member"].length - 1
-            ]["BsWfs:BsWfsElement"]["BsWfs:ParameterValue"]
-          )
-        }
-      }
-    : {};
+  const { key: ts, value: observations } = valueWithHighestKey({
+    obj: timestampsToValuesObject({ responseData })
+  });
+
+  return (
+    ts &&
+    observations && {
+      ts: fromUnixTime(ts),
+      ...observations
+    }
+  );
 }

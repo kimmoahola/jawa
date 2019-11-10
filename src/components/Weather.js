@@ -7,8 +7,8 @@ export function Weather({ place, observationData, forecastData }) {
     <div>
       <h1>{place}</h1>
       <div>
-        <Observation data={observationData} />
-        <Forecast data={forecastData} className="weather-item" />
+        <Observation data={observationData} forecastData={forecastData} />
+        <Forecast data={forecastData} />
       </div>
     </div>
   );

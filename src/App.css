@@ -1,9 +1,14 @@
-.App {
-  text-align: center;
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
 }
 
-.App-link {
-  color: #09d3ac;
+.App {
+  margin: 0.3em;
 }
 
 .weather-container {
@@ -26,11 +31,7 @@
 
   box-shadow: 0 1px 3px hsla(0, 0%, 0%, 12%), 0 1px 2px hsla(0, 0%, 0%, 24%);
 
-  line-height: 2em;
   color: hsl(220, 13%, 95%);
-  font-weight: bold;
-  text-align: center;
-
   border-radius: 0.5em;
 }
 
@@ -40,28 +41,38 @@
 }
 
 .time {
-  display: inline-block;
-  margin-right: 0.5em;
-  line-height: 1.8rem;
-  vertical-align: text-bottom;
+  border-bottom: 2px solid hsla(0, 0%, 83.5%, 0.25);
+  padding-bottom: 0.2em;
+  text-align: center;
 }
 
 .forecast-date {
   margin-top: 1em;
+  margin-left: 0.3em;
 }
 
 .temperature {
   white-space: nowrap;
+  text-align: center;
 }
 
 .temperature-number {
   font-size: 1.8rem;
+  font-weight: bold;
 }
 .temperature-degree {
-  font-weight: normal;
+  font-size: 0.8rem;
   position: relative;
-  display: inline-block;
-  top: -0.7rem;
+  top: 0.4rem;
+  vertical-align: top;
+}
+
+.light-text {
+  color: hsl(220, 19%, 74%);
+}
+
+.warning-text {
+  color: hsl(0, 100%, 82%);
 }
 
 @media all and (min-width: 410px) {
