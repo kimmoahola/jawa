@@ -58,7 +58,6 @@ function timestampsToValuesObject({ responseData }) {
       responseData["wfs:FeatureCollection"]["wfs:member"]) ||
     []
   ).reduce((previousValue, currentValue) => {
-    // console.log(previousValue, currentValue);
     const item = currentValue["BsWfs:BsWfsElement"];
 
     const ts = new Date(item["BsWfs:Time"]);
@@ -78,15 +77,6 @@ function timestampsToValuesObject({ responseData }) {
   }, {});
 }
 
-function valueWithHighestKey({ obj }) {
-  const arr = makeArraySortedByKey(obj);
-  const lastItem = arr[arr.length - 1];
-  return {
-    key: lastItem && lastItem[0],
-    value: lastItem && lastItem[1]
-  };
-}
-
 async function fetchXml({ url }) {
   const result = await fetch(url);
   return xmlToJson(
@@ -95,33 +85,14 @@ async function fetchXml({ url }) {
 }
 
 export async function fetchForecast({ place }) {
-  const endTime = endOfDay(addHours(Date.now(), 2 * 24));
+  const startTime = addHours(new Date(), -1).toISOString();
+  const endTime = endOfDay(addHours(new Date(), 3 * 24)).toISOString();
 
   const responseData = await fetchXml({
-    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&place=${place}&parameters=temperature,windspeedms,precipitation1h&endtime=${endTime.toISOString()}`
+    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&place=${place}&parameters=temperature,windspeedms,precipitation1h&starttime=${startTime}&endtime=${endTime}`
   });
 
   return convertToForecastData({
     tsByValuesObject: timestampsToValuesObject({ responseData })
   });
-}
-
-export async function fetchObservation({ place }) {
-  const startTime = addHours(Date.now(), -1);
-
-  const responseData = await fetchXml({
-    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::observations::weather::simple&place=${place}&parameters=temperature,windspeedms,precipitation1h&starttime=${startTime.toISOString()}`
-  });
-
-  const { key: ts, value: observations } = valueWithHighestKey({
-    obj: timestampsToValuesObject({ responseData })
-  });
-
-  return (
-    ts &&
-    observations && {
-      ts: fromUnixTime(ts),
-      ...observations
-    }
-  );
 }
