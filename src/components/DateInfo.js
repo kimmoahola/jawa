@@ -14,7 +14,7 @@ function getDayOfWeek(date) {
   ][dayOfWeek];
 }
 
-export function Date({ ts }) {
+export function DateInfo({ ts }) {
   return (
     <>
       {getDayOfWeek(ts)}

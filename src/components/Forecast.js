@@ -1,33 +1,41 @@
 import React from "react";
 import { TempWindPrecip } from "./TempWindPrecip";
-import { Date } from "./Date";
+import { DateInfo } from "./DateInfo";
 import { INTERESTING_HOURS } from "../config";
 import { Time } from "./Time";
+import { addHours, isSameDay } from "date-fns";
 
-function filterByInterestingHours(arr) {
-  return arr.filter(v => INTERESTING_HOURS.indexOf(v["ts"].getHours()) !== -1);
+function filterByInterestingHours2({ items, startOfDay }) {
+  const interestingHours = [
+    new Date(),
+    addHours(new Date(), 1),
+    addHours(new Date(), 2)
+  ]
+    .filter(d => isSameDay(d, startOfDay))
+    .map(d => d.getHours())
+    .concat(INTERESTING_HOURS);
+
+  return items.filter(v => interestingHours.indexOf(v["ts"].getHours()) !== -1);
 }
 
 function ForOneDay({ dayData }) {
-  const filtered = filterByInterestingHours(dayData["items"]);
+  const filtered = filterByInterestingHours2({
+    items: dayData["items"],
+    startOfDay: dayData["startOfDay"]
+  });
 
   if (filtered.length === 0) {
-    return "";
+    return null;
   }
 
   return (
     <>
       <div className="forecast-date">
-        <Date ts={dayData["startOfDay"]} />
+        <DateInfo ts={dayData["startOfDay"]} />
       </div>
       <div className="weather-container">
-        {[...Array(INTERESTING_HOURS.length - filtered.length).keys()].map(
-          (_, index2) => (
-            <div key={index2} className="weather-item weather-item-empty"></div>
-          )
-        )}
-        {filtered.map((i, index2) => (
-          <div key={index2} className="weather-item">
+        {filtered.map((i, index) => (
+          <div key={index} className="weather-item">
             <Time ts={i["ts"]} />
 
             <div className="weather-values">
@@ -45,11 +53,14 @@ function ForOneDay({ dayData }) {
 }
 
 export function Forecast({ data }) {
+  if (!data) {
+    return null;
+  }
   return (
     <>
-      {data
-        ? data.map((d, index1) => <ForOneDay key={index1} dayData={d} />)
-        : ""}
+      {data.map((d, index1) => (
+        <ForOneDay key={index1} dayData={d} />
+      ))}
     </>
   );
 }
