@@ -1,50 +1,63 @@
 import React, { useState, useEffect } from "react";
 import { fetchForecast } from "../api";
-import { FORECAST_REFRESH_INTERVAL } from "../config";
+import { FORECAST_REFRESH_INTERVAL, OLD_DATA_CHECK_INTERVAL } from "../config";
 import { Weather } from "./Weather";
 
-const DATA_CHECK_INTERVAL = 30 * 1000;
-
-export function DataLayer({ place }) {
+export function DataLayer({ location, onLocateClick }) {
   const [forecastData, setForecastData] = useState(undefined);
   const [lastForecastDataAttempt, setLastForecastDataAttempt] = useState(
     undefined
   );
+  const [lastLocation, setLastLocation] = useState(undefined);
   const [mark, setMark] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => setMark(m => m + 1), DATA_CHECK_INTERVAL);
+    const timer = setTimeout(
+      () => setMark(m => m + 1),
+      OLD_DATA_CHECK_INTERVAL
+    );
     return () => clearTimeout(timer);
   }, [mark]);
 
+  const [isError, setIsError] = useState(false);
+
   useEffect(() => {
-    async function fetchData() {
-      setForecastData(await fetchForecast({ place }));
-    }
-
-    const logData = {
-      forecastData: !!forecastData,
-      lastForecastDataAttempt: lastForecastDataAttempt,
-      "Date.now() - lastForecastDataAttempt":
-        lastForecastDataAttempt && Date.now() - lastForecastDataAttempt,
-      FORECAST_REFRESH_INTERVAL: FORECAST_REFRESH_INTERVAL
+    const fetchData = async () => {
+      setIsError(false);
+      try {
+        const result = await fetchForecast({ location });
+        setForecastData(result);
+        setLastForecastDataAttempt(Date.now());
+      } catch (error) {
+        console.error(error);
+        setIsError(true);
+      }
     };
-
     if (
       !forecastData ||
+      JSON.stringify(lastLocation) !== JSON.stringify(location) ||
       (forecastData &&
         lastForecastDataAttempt &&
         Date.now() - lastForecastDataAttempt > FORECAST_REFRESH_INTERVAL)
     ) {
-      console.log("Need forecast data refresh", logData);
+      console.log("Need forecast data refresh");
 
-      setLastForecastDataAttempt(Date.now());
       fetchData();
+      setLastLocation(location);
     } else {
-      console.log("No need for forecast data refresh", logData);
+      console.log("No need for forecast data refresh");
     }
     // eslint-disable-next-line
-  }, [mark, place]);
+  }, [mark, location]);
 
-  return <Weather place={place} forecastData={forecastData} />;
+  return (
+    <>
+      {isError && "Virhe haettaessa viimeisimpiä ennusteita."}
+      <Weather
+        location={location}
+        forecastData={forecastData}
+        onLocateClick={onLocateClick}
+      />
+    </>
+  );
 }

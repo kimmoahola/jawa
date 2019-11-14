@@ -1,10 +1,16 @@
 import React from "react";
 import { Forecast } from "./Forecast";
 
-export function Weather({ place, forecastData }) {
+export function Weather({ location, forecastData, onLocateClick }) {
   return (
     <>
-      <h1>{place}</h1>
+      <h1>
+        Sääennuste:{" "}
+        {location ? `${location.lat},${location.lng}` : "ei sijaintia"}
+      </h1>
+
+      {!location && <button onClick={onLocateClick}>Paikanna</button>}
+
       <Forecast data={forecastData} />
     </>
   );

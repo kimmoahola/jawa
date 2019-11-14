@@ -84,12 +84,16 @@ async function fetchXml({ url }) {
   );
 }
 
-export async function fetchForecast({ place }) {
+export async function fetchForecast({ location }) {
+  if (!location) {
+    return undefined;
+  }
   const startTime = addHours(new Date(), -1).toISOString();
   const endTime = endOfDay(addHours(new Date(), 3 * 24)).toISOString();
+  const latlon = `${location.lat},${location.lng}`;
 
   const responseData = await fetchXml({
-    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&place=${place}&parameters=temperature,windspeedms,precipitation1h&starttime=${startTime}&endtime=${endTime}`
+    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&latlon=${latlon}&parameters=temperature,windspeedms,precipitation1h&starttime=${startTime}&endtime=${endTime}`
   });
 
   return convertToForecastData({
