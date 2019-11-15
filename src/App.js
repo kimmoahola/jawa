@@ -8,13 +8,13 @@ function App() {
   const [locating, setLocating] = useState(false);
 
   function gotLocation(loc) {
+    setLocating(false);
     const newLocation = {
       lat: loc.coords.latitude.toFixed(2),
       lng: loc.coords.longitude.toFixed(2)
     };
     if (JSON.stringify(location) !== JSON.stringify(newLocation)) {
       console.log("Got new location", newLocation);
-      setLocating(false);
       setLocation(newLocation);
     } else {
       console.log("Got same location");
@@ -22,6 +22,7 @@ function App() {
   }
 
   function noLocation(err) {
+    setLocating(false);
     console.log(err);
   }
 
