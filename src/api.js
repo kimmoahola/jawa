@@ -92,8 +92,17 @@ export async function fetchForecast({ location }) {
   const endTime = endOfDay(addHours(new Date(), 3 * 24)).toISOString();
   const latlon = `${location.lat},${location.lng}`;
 
+  const queryParams = [
+    "request=getFeature",
+    "storedquery_id=fmi::forecast::harmonie::surface::point::simple",
+    "parameters=temperature,windspeedms,precipitation1h",
+    `latlon=${latlon}`,
+    `starttime=${startTime}`,
+    `endtime=${endTime}`
+  ].join("&");
+
   const responseData = await fetchXml({
-    url: `https://opendata.fmi.fi/wfs?request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&latlon=${latlon}&parameters=temperature,windspeedms,precipitation1h&starttime=${startTime}&endtime=${endTime}`
+    url: "https://opendata.fmi.fi/wfs?" + queryParams
   });
 
   return convertToForecastData({
