@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/jawa/static/css/main.52d28cba.chunk.css",
+    "main.css": "/jawa/static/css/main.0d9de35a.chunk.css",
     "main.js": "/jawa/static/js/main.a8256d8e.chunk.js",
     "main.js.map": "/jawa/static/js/main.a8256d8e.chunk.js.map",
     "runtime-main.js": "/jawa/static/js/runtime-main.82e6275d.js",
@@ -9,16 +9,16 @@
     "static/js/2.835f334c.chunk.js": "/jawa/static/js/2.835f334c.chunk.js",
     "static/js/2.835f334c.chunk.js.map": "/jawa/static/js/2.835f334c.chunk.js.map",
     "index.html": "/jawa/index.html",
-    "precache-manifest.52c7d18a3fa13334eb707a326b95ba09.js": "/jawa/precache-manifest.52c7d18a3fa13334eb707a326b95ba09.js",
+    "precache-manifest.a65d8e7d820c98045815556e62ad221a.js": "/jawa/precache-manifest.a65d8e7d820c98045815556e62ad221a.js",
     "service-worker.js": "/jawa/service-worker.js",
     "static/css/2.764ccc25.chunk.css.map": "/jawa/static/css/2.764ccc25.chunk.css.map",
-    "static/css/main.52d28cba.chunk.css.map": "/jawa/static/css/main.52d28cba.chunk.css.map"
+    "static/css/main.0d9de35a.chunk.css.map": "/jawa/static/css/main.0d9de35a.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.82e6275d.js",
     "static/css/2.764ccc25.chunk.css",
     "static/js/2.835f334c.chunk.js",
-    "static/css/main.52d28cba.chunk.css",
+    "static/css/main.0d9de35a.chunk.css",
     "static/js/main.a8256d8e.chunk.js"
   ]
 }
