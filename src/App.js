@@ -5,6 +5,7 @@ import { LOCATION_UPDATE_INTERVAL } from "./config";
 
 function App() {
   const [location, setLocation] = useState(undefined);
+  const [locating, setLocating] = useState(false);
 
   function gotLocation(loc) {
     const newLocation = {
@@ -13,6 +14,7 @@ function App() {
     };
     if (JSON.stringify(location) !== JSON.stringify(newLocation)) {
       console.log("Got new location", newLocation);
+      setLocating(false);
       setLocation(newLocation);
     } else {
       console.log("Got same location");
@@ -26,6 +28,7 @@ function App() {
   function askLocation() {
     console.log("Asking for location");
     if (navigator.geolocation) {
+      setLocating(true);
       navigator.geolocation.getCurrentPosition(gotLocation, noLocation, {
         maximumAge: 30 * 60 * 1000
       });
@@ -65,6 +68,7 @@ function App() {
 
   return (
     <div className="App">
+      {locating && "Paikannetaan..."}
       <DataLayer location={location} onLocateClick={askLocation} />
     </div>
   );
