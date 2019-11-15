@@ -1,21 +1,24 @@
 {
   "files": {
-    "main.css": "/jawa/static/css/main.bc1d5102.chunk.css",
-    "main.js": "/jawa/static/js/main.01dc8d57.chunk.js",
-    "main.js.map": "/jawa/static/js/main.01dc8d57.chunk.js.map",
+    "main.css": "/jawa/static/css/main.da1754d2.chunk.css",
+    "main.js": "/jawa/static/js/main.d0338d54.chunk.js",
+    "main.js.map": "/jawa/static/js/main.d0338d54.chunk.js.map",
     "runtime-main.js": "/jawa/static/js/runtime-main.82e6275d.js",
     "runtime-main.js.map": "/jawa/static/js/runtime-main.82e6275d.js.map",
-    "static/js/2.3defe51d.chunk.js": "/jawa/static/js/2.3defe51d.chunk.js",
-    "static/js/2.3defe51d.chunk.js.map": "/jawa/static/js/2.3defe51d.chunk.js.map",
+    "static/css/2.764ccc25.chunk.css": "/jawa/static/css/2.764ccc25.chunk.css",
+    "static/js/2.835f334c.chunk.js": "/jawa/static/js/2.835f334c.chunk.js",
+    "static/js/2.835f334c.chunk.js.map": "/jawa/static/js/2.835f334c.chunk.js.map",
     "index.html": "/jawa/index.html",
-    "precache-manifest.8518b418a423e4a4090159e3d5457718.js": "/jawa/precache-manifest.8518b418a423e4a4090159e3d5457718.js",
+    "precache-manifest.a693e9cf28fd7236d7ed95a3844ef5c7.js": "/jawa/precache-manifest.a693e9cf28fd7236d7ed95a3844ef5c7.js",
     "service-worker.js": "/jawa/service-worker.js",
-    "static/css/main.bc1d5102.chunk.css.map": "/jawa/static/css/main.bc1d5102.chunk.css.map"
+    "static/css/2.764ccc25.chunk.css.map": "/jawa/static/css/2.764ccc25.chunk.css.map",
+    "static/css/main.da1754d2.chunk.css.map": "/jawa/static/css/main.da1754d2.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.82e6275d.js",
-    "static/js/2.3defe51d.chunk.js",
-    "static/css/main.bc1d5102.chunk.css",
-    "static/js/main.01dc8d57.chunk.js"
+    "static/css/2.764ccc25.chunk.css",
+    "static/js/2.835f334c.chunk.js",
+    "static/css/main.da1754d2.chunk.css",
+    "static/js/main.d0338d54.chunk.js"
   ]
 }
