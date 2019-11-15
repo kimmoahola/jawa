@@ -4,7 +4,7 @@ export function Precipitation({ precipitation1h }) {
   let className = "";
   let text = "";
 
-  if (isNaN(precipitation1h)) {
+  if (!Number.isFinite(precipitation1h)) {
     className = "light-text";
     text = "(ei sadetietoa)";
   } else {

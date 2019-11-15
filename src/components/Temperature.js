@@ -1,7 +1,7 @@
 import React from "react";
 
 export function Temperature({ temperature }) {
-  return isNaN(temperature) ? (
+  return !Number.isFinite(temperature) ? (
     <div>(ei lämpötilatietoa)</div>
   ) : (
     <div className="temperature">

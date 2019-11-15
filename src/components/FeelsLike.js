@@ -14,7 +14,7 @@ export function FeelsLike({ temperature, windspeedms }) {
   let className = "";
   let text = "";
 
-  if (isNaN(temperature) || isNaN(windspeedms)) {
+  if (!Number.isFinite(temperature) || !Number.isFinite(windspeedms)) {
     text = "";
   } else {
     const feelsLikeTemperature = frost(temperature, windspeedms);

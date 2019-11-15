@@ -4,7 +4,7 @@ export function Wind({ windspeedms }) {
   let className = "";
   let text = "";
 
-  if (isNaN(windspeedms)) {
+  if (!Number.isFinite(windspeedms)) {
     className = "light-text";
     text = "(ei tuulitietoa)";
   } else {
