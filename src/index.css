@@ -21,6 +21,11 @@ body {
   background: radial-gradient(circle, #cfd9df 0%, #e2ebf0 100%);
 }
 
+#root {
+  max-width: 40em;
+  margin: 0 auto;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
