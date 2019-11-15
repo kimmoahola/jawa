@@ -19,7 +19,7 @@ html {
 
 .weather-item {
   flex: 1 100%;
-  background: repeating-linear-gradient(
+  background-image: repeating-linear-gradient(
     45deg,
     hsl(220, 13%, 18%),
     hsl(220, 13%, 18%) 0.8em,
@@ -37,7 +37,7 @@ html {
 }
 
 .weather-item-empty {
-  background: inherit;
+  background-image: inherit;
   box-shadow: inherit;
 }
 
