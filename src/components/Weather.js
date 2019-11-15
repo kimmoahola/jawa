@@ -1,5 +1,6 @@
 import React from "react";
 import { Forecast } from "./Forecast";
+import { LastUpdated } from "./LastUpdated";
 
 export function Weather({ location, forecastData, onLocateClick }) {
   return (
@@ -12,7 +13,8 @@ export function Weather({ location, forecastData, onLocateClick }) {
         </>
       )}
 
-      <Forecast data={forecastData} />
+      <Forecast data={forecastData && forecastData["items"]} />
+      <LastUpdated ts={forecastData && forecastData["fetchTs"]} />
     </>
   );
 }

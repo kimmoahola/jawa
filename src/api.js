@@ -105,7 +105,15 @@ export async function fetchForecast({ location }) {
     url: "https://opendata.fmi.fi/wfs?" + queryParams
   });
 
-  return convertToForecastData({
-    tsByValuesObject: timestampsToValuesObject({ responseData })
-  });
+  const fetchTs =
+    responseData &&
+    responseData["wfs:FeatureCollection"] &&
+    new Date(responseData["wfs:FeatureCollection"]["@attributes"]["timeStamp"]);
+
+  return {
+    fetchTs,
+    items: convertToForecastData({
+      tsByValuesObject: timestampsToValuesObject({ responseData })
+    })
+  };
 }
