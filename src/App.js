@@ -5,10 +5,10 @@ import { LOCATION_UPDATE_INTERVAL } from "./config";
 
 function App() {
   const [location, setLocation] = useState(undefined);
-  const [locating, setLocating] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
 
   function gotLocation(loc) {
-    setLocating(false);
+    setIsLocating(false);
     const newLocation = {
       lat: loc.coords.latitude.toFixed(2),
       lng: loc.coords.longitude.toFixed(2)
@@ -22,14 +22,14 @@ function App() {
   }
 
   function noLocation(err) {
-    setLocating(false);
+    setIsLocating(false);
     console.log(err);
   }
 
   function askLocation() {
     console.log("Asking for location");
     if (navigator.geolocation) {
-      setLocating(true);
+      setIsLocating(true);
       navigator.geolocation.getCurrentPosition(gotLocation, noLocation, {
         maximumAge: 30 * 60 * 1000
       });
@@ -69,8 +69,11 @@ function App() {
 
   return (
     <div className="App">
-      {locating && "Paikannetaan..."}
-      <DataLayer location={location} onLocateClick={askLocation} />
+      <DataLayer
+        isLocating={isLocating}
+        location={location}
+        onLocateClick={askLocation}
+      />
     </div>
   );
 }

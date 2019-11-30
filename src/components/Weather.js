@@ -9,12 +9,14 @@ export function Weather({ location, forecastData, onLocateClick }) {
 
       {!location && (
         <>
-          ei sijaintia <button onClick={onLocateClick}>Paikanna</button>
+          <button className="button" onClick={onLocateClick}>
+            Hae sijainti
+          </button>
         </>
       )}
 
       <Forecast data={forecastData && forecastData["items"]} />
-      <LastUpdated ts={forecastData && forecastData["fetchTs"]} />
+      {forecastData && <LastUpdated ts={forecastData["fetchTs"]} />}
     </>
   );
 }

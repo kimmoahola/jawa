@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { fetchForecast } from "../api";
 import { FORECAST_REFRESH_INTERVAL, OLD_DATA_CHECK_INTERVAL } from "../config";
 import { Weather } from "./Weather";
+import { StatusMessage } from "./StatusMessage";
 
-export function DataLayer({ location, onLocateClick }) {
+export function DataLayer({ isLocating, location, onLocateClick }) {
   const [forecastData, setForecastData] = useState(undefined);
   const [lastForecastDataAttempt, setLastForecastDataAttempt] = useState(
     undefined
@@ -20,17 +21,21 @@ export function DataLayer({ location, onLocateClick }) {
   }, [mark]);
 
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsError(false);
+      setIsLoading(true);
       try {
         const result = await fetchForecast({ location });
         setForecastData(result);
         setLastForecastDataAttempt(Date.now());
+        setIsLoading(false);
       } catch (error) {
         console.error(error);
         setIsError(true);
+        setIsLoading(false);
       }
     };
     if (
@@ -52,7 +57,12 @@ export function DataLayer({ location, onLocateClick }) {
 
   return (
     <>
-      {isError && "Virhe haettaessa viimeisimpiä ennusteita."}
+      <StatusMessage
+        isLocating={isLocating}
+        location={location}
+        isLoading={isLoading}
+        isError={isError}
+      />
       <Weather
         location={location}
         forecastData={forecastData}
